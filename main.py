@@ -17,6 +17,9 @@ from custom.listWidgets import *  # 自定义的列表小部件
 from custom.stackedWidget import *  # 自定义的堆叠小部件
 from custom.treeView import FileSystemTreeView  # 自定义的文件系统树视图
 from yolo import YOLO  # YOLO目标检测类
+from Database import Database  # 数据库操作类
+from Sign_Up import SignWindow  # 注册窗口类
+
 
 # 设置应用程序的任务栏图标
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
@@ -52,7 +55,7 @@ class DetectThread(QThread):
             self.count = 0
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # 转换回BGR格式
         fps = (fps + (1. / (time.time() - t1))) / 2  # 计算帧率
-        print("fps= %.2f" % (fps))  # 打印帧率
+        #print("fps= %.2f" % (fps))  # 打印帧率
         frame = cv2.putText(frame, "fps= %.2f" % (
             fps), (0, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)  # 在帧上显示帧率
         if self.count > 30:  # 如果连续检测到未佩戴口罩超过30帧
@@ -102,11 +105,10 @@ class MyApp(QMainWindow):
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dock_file)  # 添加左侧停靠窗口
         self.addDockWidget(Qt.RightDockWidgetArea, self.dock_attr)  # 添加右侧停靠窗口
 
-        self.setWindowTitle('口罩佩戴检测')  # 设置窗口标题
+        self.setWindowTitle('穴位检测')  # 设置窗口标题
         self.setWindowIcon(QIcon('icons/mask.png'))  # 设置窗口图标
         self.src_img = None  # 原始图像
         self.cur_img = None  # 当前图像
-
     # 更新图像
     def update_image(self):
         if self.src_img is None:
@@ -251,11 +253,14 @@ class MyApp(QMainWindow):
                 self.cap.release()
             event.accept()
 
+
+
 # 主程序入口
 if __name__ == "__main__":
     yolo = YOLO()  # 初始化YOLO模型
     app = QApplication(sys.argv)  # 创建应用程序
-    app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())  # 设置暗黑主题
+    #app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())  # 设置暗黑主题
+    app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))  # 设置暗黑主题
     window = MyApp()  # 创建主窗口
     window.show()  # 显示主窗口
     sys.exit(app.exec_())  # 运行应用程序
