@@ -1,7 +1,6 @@
 import ctypes  # 用于设置应用程序的图标
 import sys  # 提供与Python解释器交互的功能
 import time  # 提供时间相关的功能
-
 import cv2  # OpenCV库，用于图像处理
 import numpy as np  # 数值计算库
 import qdarkstyle  # PyQt5的暗黑主题样式
@@ -11,7 +10,6 @@ from PyQt5.Qt import QThread  # PyQt5线程模块
 from PyQt5.QtCore import *  # PyQt5核心功能
 from PyQt5.QtGui import *  # PyQt5图形界面功能
 from PyQt5.QtWidgets import *  # PyQt5小部件功能
-
 from custom.graphicsView import GraphicsView  # 自定义的图形视图类
 from custom.listWidgets import *  # 自定义的列表小部件
 from custom.stackedWidget import *  # 自定义的堆叠小部件
@@ -28,11 +26,12 @@ ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("myappid")
 class DetectThread(QThread):
     Send_signal = pyqtSignal(np.ndarray, int)  # 自定义信号，发送检测结果和警告状态
 
-    def __init__(self, fileName):
+    def __init__(self, fileName, yolo):
         super(DetectThread, self).__init__()
         self.capture = cv2.VideoCapture(fileName)  # 打开视频文件或摄像头
         self.count = 0  # 检测到未佩戴口罩的计数
         self.warn = False  # 是否发送警告信号
+        self.yolo = yolo  # 接收 yolo 对象
 
     def run(self):
         # 循环读取视频帧并进行检测
@@ -47,7 +46,7 @@ class DetectThread(QThread):
         frame = self.frame  # 当前帧
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # 转换为RGB格式
         frame = Image.fromarray(np.uint8(frame))  # 转换为Pillow图像
-        frame_new, predicted_class = yolo.detect_image(frame)  # 使用YOLO进行检测
+        frame_new, predicted_class = self.yolo.detect_image(frame)  # 使用 self.yolo
         frame = np.array(frame_new)  # 转换为NumPy数组
         if predicted_class == "face":  # 如果检测到人脸
             self.count += 1
@@ -69,8 +68,9 @@ class DetectThread(QThread):
 class MyApp(QMainWindow):
     def __init__(self):
         super(MyApp, self).__init__()
+        self.yolo = YOLO()  # 将 yolo 对象作为实例属性
 
-        self.cap = cv2.VideoCapture()  # 视频捕获对象
+        self.cap = cv2.VideoCapture(0,cv2.CAP_DSHOW)  # 视频捕获对象
         self.CAM_NUM = 0  # 摄像头编号
         self.thread_status = False  # 判断识别线程是否开启
         self.tool_bar = self.addToolBar('工具栏')  # 添加工具栏
@@ -180,7 +180,7 @@ class MyApp(QMainWindow):
                                                     buttons=QtWidgets.QMessageBox.Ok,
                                                     defaultButton=QtWidgets.QMessageBox.Ok)
             else:
-                self.detectThread = DetectThread(fileName)
+                self.detectThread = DetectThread(fileName, self.yolo)
                 self.detectThread.Send_signal.connect(self.Display)
                 self.detectThread.start()
                 self.action_video.setText('关闭视频')
@@ -199,7 +199,7 @@ class MyApp(QMainWindow):
                 self, "选择图片", "D:/", "*.jpg;;*.png;;All Files(*)")
             if fileName != '':
                 src_img = Image.open(fileName)
-                r_image, predicted_class = yolo.detect_image(src_img)
+                r_image, predicted_class = self.yolo.detect_image(src_img)  # 使用 self.yolo
                 r_image = np.array(r_image)
                 showImage = QtGui.QImage(
                     r_image.data, r_image.shape[1], r_image.shape[0], QtGui.QImage.Format_RGB888)
@@ -214,7 +214,7 @@ class MyApp(QMainWindow):
                                                     buttons=QtWidgets.QMessageBox.Ok,
                                                     defaultButton=QtWidgets.QMessageBox.Ok)
             else:
-                self.detectThread = DetectThread(self.CAM_NUM)
+                self.detectThread = DetectThread(self.CAM_NUM, self.yolo)
                 self.detectThread.Send_signal.connect(self.Display)
                 self.detectThread.start()
                 self.action_video.setText('关闭视频')
@@ -257,7 +257,6 @@ class MyApp(QMainWindow):
 
 # 主程序入口
 if __name__ == "__main__":
-    yolo = YOLO()  # 初始化YOLO模型
     app = QApplication(sys.argv)  # 创建应用程序
     #app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())  # 设置暗黑主题
     app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))  # 设置暗黑主题

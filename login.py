@@ -1,12 +1,10 @@
 import sys
 from Sign_Up import SignWindow  # 注册所需要的自定义库
 from Database import Database
-from main import *
+from main_win import MyApp
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit, QFrame, QMessageBox, QComboBox
 from PyQt5.QtGui import QIcon, QFont
 from PyQt5.QtCore import Qt
-import qdarkstyle 
-from yolo import YOLO 
 
 
 class MyWindow(QWidget):
@@ -164,10 +162,13 @@ class MyWindow(QWidget):
         self.sign_up_win.close()  # 关闭登录窗口的时候，注册窗口也应该关闭
 
 
+# def open_main_window():
+#     main_window = MyApp()  # 创建 MyApp 实例
+#     main_window.show()
+
+
 if __name__ == '__main__':
-    yolo = YOLO() 
     app = QApplication(sys.argv)
-    #app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyqt5'))
     window = MyWindow()
     window.show()
     sys.exit(app.exec_())
