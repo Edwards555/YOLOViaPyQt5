@@ -1,9 +1,9 @@
 <!--
  * @Description: 
- * @Author: Egrt
- * @Date: 2021-05-08 15:27:48
- * @LastEditors: Egrt
- * @LastEditTime: 2023-03-10 19:02:03
+ * @Author: Edwards
+ * @Date: 2025-03-03 
+ * @LastEditors: Edwards
+ * @LastEditTime: null
 -->
 ## PyQt5实现目标检测系统搭建——支持多线程
 ---
@@ -26,6 +26,6 @@ pygame==2.2.0
 [yolov4_mobile_mask.pth](https://github.com/Egrt/YOLO_PyQt5/releases/download/V1.0/yolov7_mobile_mask.pth)
 
 ## 运行
-运行根目录下**main.py**启动界面：
+运行根目录下**login.py**启动界面：
 
 ![界面演示](maskimg/demo.png)

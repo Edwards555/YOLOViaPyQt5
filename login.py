@@ -10,7 +10,7 @@ from PyQt5.QtCore import Qt
 class MyWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.icon = QIcon("./IMG/python-logo.png")
+        self.icon = QIcon("./icons/mask.png")
         self.database = Database('./data.db')
         self.sign_up_win = SignWindow()  # 创建的注册窗口
         self.main_win = MyApp()  # 登录后的主页面
@@ -121,7 +121,7 @@ class MyWindow(QWidget):
         self.frame.resize(1000, 600)
         self.frame.move(0, 0)
         self.frame.setStyleSheet(
-            'background-image: url("./IMG/python.png"); background-repeat: no-repeat; text-align:center;')
+            'background-image: url("./icons/1.png"); background-repeat: no-repeat; text-align:center;')
 
     def login(self):
         """登录功能实现"""

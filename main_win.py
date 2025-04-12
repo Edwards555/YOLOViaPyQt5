@@ -98,7 +98,7 @@ class MyApp(QMainWindow):
 
         self.dock_attr = QDockWidget(self)  # 属性停靠窗口
         self.dock_attr.setWidget(self.stackedWidget)
-        self.dock_attr.setTitleBarWidget(QLabel('上报数据'))  # 设置标题
+        #self.dock_attr.setTitleBarWidget(QLabel('上报数据'))  # 设置标题
         self.dock_attr.setFeatures(QDockWidget.NoDockWidgetFeatures)  # 禁用停靠功能
 
         self.setCentralWidget(self.graphicsView)  # 设置中心窗口
